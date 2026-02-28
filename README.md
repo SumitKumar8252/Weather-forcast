@@ -1,173 +1,154 @@
 # 🌤 AtmosIQ — Weather Analytics Dashboard
 
-A production-grade Weather Analytics Dashboard built with React, Redux Toolkit, Recharts, and the OpenWeatherMap API.
+> A production-grade weather analytics web app built with React, Redux Toolkit, Firebase, Tailwind CSS, and the OpenWeatherMap API.
+
+![React](https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react)
+![Redux](https://img.shields.io/badge/Redux_Toolkit-2.x-764ABC?style=flat-square&logo=redux)
+![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-3.x-38BDF8?style=flat-square&logo=tailwindcss)
+![Firebase](https://img.shields.io/badge/Firebase-Auth-FFCA28?style=flat-square&logo=firebase)
+![Vite](https://img.shields.io/badge/Vite-5.x-646CFF?style=flat-square&logo=vite)
+![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
 
 ---
 
-## 📁 Folder Structure
+## ✨ Features
+
+| Category | Feature |
+|---|---|
+| **Dashboard** | Hero card for primary city + grid of all saved cities |
+| **Live Data** | Current weather, 5-day & hourly forecasts via OpenWeatherMap |
+| **Real-time** | Auto-refresh every 60 seconds with 60s client-side cache |
+| **Charts** | Interactive temperature, precipitation & wind charts (Recharts) |
+| **Charts** | 24h / 48h / 5-Day date-range toggling on all charts |
+| **Analytics** | UV Index (color-coded severity), pressure, visibility, cloudiness |
+| **Search** | Debounced city autocomplete using OpenWeatherMap Geocoding API |
+| **Favorites** | Pin / unpin cities, persisted across sessions via localStorage |
+| **Unit Toggle** | Celsius ↔ Fahrenheit — instant, no re-fetch |
+| **Auth** | Firebase Email/Password + Google Sign-In, protected routes |
+| **Design** | Dark theme, weather-condition gradients, fully responsive |
+
+---
+
+## 🏗 Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Framework | React 18 + Vite 5 |
+| State | Redux Toolkit + React-Redux |
+| Styling | Tailwind CSS v3 |
+| Auth | Firebase Authentication |
+| API | OpenWeatherMap (Weather 2.5, Forecast 2.5, Geocoding) |
+| Charts | Recharts |
+| HTTP | Axios |
+| Routing | React Router DOM v6 |
+
+---
+
+## 📂 Project Structure
 
 ```
 weather-dashboard/
-├── public/
 ├── src/
 │   ├── app/
-│   │   └── store.js                  ← Redux store (with localStorage persistence)
+│   │   └── store.js                     # Redux store with localStorage persistence
 │   ├── features/
 │   │   ├── weather/
-│   │   │   ├── weatherSlice.js       ← Async thunks, caching logic, selectors
-│   │   │   └── weatherAPI.js         ← Axios API calls (current, forecast, search)
+│   │   │   ├── weatherSlice.js          # Thunks, 60s cache, selectors
+│   │   │   └── weatherAPI.js            # Axios: current, forecast, search, UV
 │   │   ├── favorites/
-│   │   │   └── favoritesSlice.js     ← Add/remove/reorder favorite cities
-│   │   └── settings/
-│   │       └── settingsSlice.js      ← Celsius ↔ Fahrenheit preference
+│   │   │   └── favoritesSlice.js        # Add / remove / reorder cities
+│   │   ├── settings/
+│   │   │   └── settingsSlice.js         # Unit preference (C°↔F°)
+│   │   └── auth/
+│   │       └── authSlice.js             # Firebase auth state in Redux
+│   ├── firebase/
+│   │   └── firebaseConfig.js            # Firebase initialisation (guarded)
+│   ├── context/
+│   │   └── AuthContext.jsx              # onAuthStateChanged → Redux sync
 │   ├── pages/
-│   │   ├── Dashboard.jsx             ← City cards grid, main screen
-│   │   ├── Dashboard.module.css
-│   │   ├── CityDetail.jsx            ← Deep analytics for a single city
-│   │   └── CityDetail.module.css
+│   │   ├── Dashboard.jsx                # Hero card + city grid
+│   │   ├── CityDetail.jsx               # Full analytics for one city
+│   │   ├── Login.jsx                    # Email/password + Google sign-in
+│   │   └── Register.jsx                 # Account creation
 │   ├── components/
-│   │   ├── Navbar.jsx                ← Search bar, unit toggle
-│   │   ├── Navbar.module.css
-│   │   ├── CityCard.jsx              ← Summary card with live data
-│   │   ├── CityCard.module.css
+│   │   ├── Navbar.jsx                   # Search bar, unit toggle, user menu
+│   │   ├── CityCard.jsx                 # Summary card + HeroCard export
+│   │   ├── ProtectedRoute.jsx           # Auth guard
+│   │   ├── ErrorBoundary.jsx            # App-level crash protection
 │   │   └── Charts/
-│   │       ├── TemperatureChart.jsx  ← Line chart (temp + feels like)
-│   │       ├── PrecipitationChart.jsx← Combo bar+line (rain chance + humidity)
-│   │       └── WindChart.jsx         ← Area chart (wind speed)
+│   │       ├── TemperatureChart.jsx     # Line chart (temp + feels-like)
+│   │       ├── PrecipitationChart.jsx   # Combo bar+line (rain + humidity)
+│   │       └── WindChart.jsx            # Area chart (wind speed)
 │   ├── hooks/
-│   │   ├── useWeather.js             ← Fetch + auto-refresh every 60s
-│   │   └── useSearch.js              ← Debounced city autocomplete
+│   │   ├── useWeather.js                # Fetch + auto-refresh every 60s
+│   │   └── useSearch.js                 # Debounced geocoding autocomplete
 │   ├── utils/
-│   │   └── helpers.js                ← Temp conversion, icons, data formatters
+│   │   └── helpers.js                   # Temp conversion, icons, formatters
 │   ├── App.jsx
 │   ├── main.jsx
-│   └── index.css
-├── .env.example
+│   └── index.css                        # Tailwind directives + global base
+├── .env                                 # Local secrets (not committed)
+├── .gitignore
+├── tailwind.config.js
+├── postcss.config.js
 ├── vite.config.js
 └── package.json
 ```
 
 ---
 
-## 🚀 Setup Instructions
+## 🚀 Getting Started
 
-### 1. Clone and install
-```bash
-git clone <your-repo>
-cd weather-dashboard
-npm install
-```
+### Prerequisites
+- Node.js ≥ 18
+- A free [OpenWeatherMap](https://openweathermap.org/api) API key
+- A [Firebase](https://console.firebase.google.com) project with Authentication enabled
 
-### 2. Get a free API key
-- Go to https://openweathermap.org/api
-- Sign up → My API Keys → Copy your key
-- The free tier includes current weather, 5-day forecast, and geocoding
 
-### 3. Create your `.env` file
-```bash
-cp .env.example .env
-```
-Then edit `.env`:
-```
-VITE_WEATHER_API_KEY=paste_your_key_here
-```
 
-### 4. Run the dev server
+> ⚠️ **Important:** OpenWeatherMap API keys can take up to **2 hours** to activate after creation.
+
+<!-- ### 3. Enable Firebase Authentication
+
+In the [Firebase Console](https://console.firebase.google.com):
+1. Go to **Authentication → Sign-in methods**
+2. Enable **Email/Password**
+3. Enable **Google**
+
+### 4. Start the development server
+
 ```bash
 npm run dev
 ```
-Open http://localhost:5173
 
----
+Open [http://localhost:5173](http://localhost:5173)
 
-## 🔑 Key Architecture Decisions
+--- -->
 
-### State Shape (Redux)
+## ⚙️ Architecture Decisions
+
+### Caching & Real-time Data
+Every API call checks `lastFetched` before hitting the network:
+```js
+// weatherSlice.js
+if (existing && now - existing.lastFetched < 60_000) return null // serve from cache
+```
+`useWeather.js` then re-runs the thunk every 60 seconds via `setInterval`, so data is always ≤ 60 seconds old without hammering the API.
+
+### Temperature Storage
+All temperatures are stored **in Celsius** from the API. Conversion to Fahrenheit happens **only at render time** in `formatTemp(tempC, unit)`. Toggling the unit is instant — no refetch required.
+
+### Auth Guard
+`ProtectedRoute` checks the Redux `auth.loading` and `auth.user` state. Firebase initialization is guarded against missing `.env` credentials so the app never crashes with a blank page.
+
+### Redux State Shape
 ```js
 {
-  weather: {
-    cities: {
-      "London": {
-        current: { ... },      // OpenWeatherMap /weather response
-        forecast: [ ... ],     // OpenWeatherMap /forecast list
-        lastFetched: 1234567   // Unix ms timestamp for cache check
-      }
-    },
-    loading: { "London": false },
-    errors:  { "London": null }
-  },
-  favorites: {
-    list: ["London", "New York"]  // Persisted to localStorage
-  },
-  settings: {
-    unit: "celsius"               // Persisted to localStorage
-  }
+  weather:   { cities: {}, loading: {}, errors: {} },  // keyed by city name
+  favorites: { list: ["London", "Tokyo"] },            // persisted to localStorage
+  settings:  { unit: "celsius" },                      // persisted to localStorage
+  auth:      { user: null, loading: false }
 }
 ```
 
-### Caching (60s)
-In `weatherSlice.js`, every `fetchCityWeather` thunk checks `lastFetched` before making an API call:
-```js
-if (existing && now - existing.lastFetched < 60000) return null // use cache
-```
 
-### Auto-refresh
-`useWeather.js` sets a `setInterval` that re-runs the fetch every 60 seconds. The cache check means it only hits the network if data is actually stale.
-
-### Temperature conversion
-All temperatures are stored in **Celsius** internally. Conversion happens only at display time via `formatTemp(tempC, unit)` in `utils/helpers.js`. This means toggling Celsius/Fahrenheit instantly updates every number on screen without any re-fetching.
-
-### Debounced Search
-`useSearch.js` waits 300ms after the user stops typing before calling the geocoding API, preventing rate limit abuse.
-
----
-
-## ✅ Features Checklist
-
-| Feature | Status |
-|---------|--------|
-| City cards on dashboard | ✅ |
-| Real-time weather (OpenWeatherMap) | ✅ |
-| Auto-refresh every 60s | ✅ |
-| 60s cache (no duplicate API calls) | ✅ |
-| Search with autocomplete (debounced) | ✅ |
-| Favorite cities (persisted) | ✅ |
-| 5-day forecast | ✅ |
-| Hourly charts (temp, rain, wind) | ✅ |
-| Celsius ↔ Fahrenheit toggle | ✅ |
-| Responsive design (mobile) | ✅ |
-| Loading skeletons | ✅ |
-| Error handling | ✅ |
-
----
-
-## 📦 Dependencies
-
-| Package | Purpose |
-|---------|---------|
-| `react` / `react-dom` | UI framework |
-| `react-router-dom` | Page routing |
-| `@reduxjs/toolkit` | State management |
-| `react-redux` | React-Redux bindings |
-| `axios` | HTTP requests |
-| `recharts` | Charts (line, bar, area) |
-| `vite` | Dev server + bundler |
-
----
-
-## 🔮 Bonus Features (To Add)
-
-### Google Sign-In with Firebase
-```bash
-npm install firebase
-```
-1. Create a Firebase project at https://console.firebase.google.com
-2. Enable Google Sign-In under Authentication
-3. Add `firebaseConfig` to a new `src/firebase.js` file
-4. After login, save/load favorites from Firestore using the user's UID
-
-### Bonus: Redux Persist (simpler persistence)
-```bash
-npm install redux-persist
-```
-Replace the manual `localStorage` sync in `store.js` with `redux-persist` for more robust persistence.
