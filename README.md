@@ -7,7 +7,7 @@
 ![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-3.x-38BDF8?style=flat-square&logo=tailwindcss)
 ![Firebase](https://img.shields.io/badge/Firebase-Auth-FFCA28?style=flat-square&logo=firebase)
 ![Vite](https://img.shields.io/badge/Vite-5.x-646CFF?style=flat-square&logo=vite)
-![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
+
 
 ---
 
@@ -37,7 +37,7 @@
 | State | Redux Toolkit + React-Redux |
 | Styling | Tailwind CSS v3 |
 | Auth | Firebase Authentication |
-| API | OpenWeatherMap (Weather 2.5, Forecast 2.5, Geocoding) |
+| API | OpenWeatherMap  |
 | Charts | Recharts |
 | HTTP | Axios |
 | Routing | React Router DOM v6 |
@@ -124,31 +124,5 @@ npm run dev
 Open [http://localhost:5173](http://localhost:5173)
 
 --- -->
-
-## ⚙️ Architecture Decisions
-
-### Caching & Real-time Data
-Every API call checks `lastFetched` before hitting the network:
-```js
-// weatherSlice.js
-if (existing && now - existing.lastFetched < 60_000) return null // serve from cache
-```
-`useWeather.js` then re-runs the thunk every 60 seconds via `setInterval`, so data is always ≤ 60 seconds old without hammering the API.
-
-### Temperature Storage
-All temperatures are stored **in Celsius** from the API. Conversion to Fahrenheit happens **only at render time** in `formatTemp(tempC, unit)`. Toggling the unit is instant — no refetch required.
-
-### Auth Guard
-`ProtectedRoute` checks the Redux `auth.loading` and `auth.user` state. Firebase initialization is guarded against missing `.env` credentials so the app never crashes with a blank page.
-
-### Redux State Shape
-```js
-{
-  weather:   { cities: {}, loading: {}, errors: {} },  // keyed by city name
-  favorites: { list: ["London", "Tokyo"] },            // persisted to localStorage
-  settings:  { unit: "celsius" },                      // persisted to localStorage
-  auth:      { user: null, loading: false }
-}
-```
 
 
